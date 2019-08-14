@@ -5,14 +5,14 @@
  * 滚轮滚到一定位置时，将 sidebar-wrap 添加 fixed 样式
  * 反之，取消样式
  */
-(function() {
+(function () {
     if (window.innerWidth > 770) {
 
         var sidebarWrap = document.querySelector('.right>.wrap')
 
         //fix 之后百分比宽度会失效，这里用js赋予宽度
         sidebarWrap.style.width = sidebarWrap.offsetWidth + "px"
-        window.onscroll = function() {
+        window.onscroll = function () {
 
             // 页面顶部滚进去的距离
             var scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop)
@@ -20,7 +20,7 @@
 
             // 页面底部滚进去的距离
             var htmlHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-                // console.log(htmlHeight);
+            // console.log(htmlHeight);
             var scrollBottom = htmlHeight - window.innerHeight - scrollTop
 
             if (scrollTop < 53) {
@@ -59,8 +59,8 @@ function isMaxHeight() {
     var contentMaxHeight = windowHeight - 77 - 60
     var contentHeight = contentUl.offsetHeight
     return contentMaxHeight === contentHeight
-        // console.log(contentMaxHeight);
-        // console.log(contentHeight);
+    // console.log(contentMaxHeight);
+    // console.log(contentHeight);
 }
 
 
@@ -70,7 +70,7 @@ function isMaxHeight() {
  * @param  {[type]} function( [description]
  * @return {[type]}           [description]
  */
-(function() {
+(function () {
     if (window.innerWidth <= 770) {
         var anchorBtn = document.querySelector('.anchor')
         var rightDiv = document.querySelector('.right')
@@ -78,14 +78,14 @@ function isMaxHeight() {
         /**
          * 监听锚点按钮
          */
-        anchorBtn.onclick = function(e) {
+        anchorBtn.onclick = function (e) {
             e.stopPropagation()
             rightDiv.classList.add('right-show')
             anchorBtn.classList.add('anchor-hide')
         }
 
         //监听body，点击body，隐藏Content
-        document.querySelector('body').addEventListener('click', function() {
+        document.querySelector('body').addEventListener('click', function () {
             rightDiv.classList.remove('right-show')
             anchorBtn.classList.remove('anchor-hide')
         })
@@ -99,10 +99,10 @@ function isMaxHeight() {
  * 目录锚的位置固定
  */
 function ancherPostion(anchorBtn, rightDiv) {
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
         // console.log('scroll');
         var top = anchorBtn.getBoundingClientRect().top
-            // console.log(top);
+        // console.log(top);
         var scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop)
         if (scrollTop > 50) {
             anchorBtn.style.top = '20px'
@@ -134,23 +134,23 @@ function moveTOC() {
 
         // if (!isAndroidWechatBrowser()) {
 
-            //添加scroll样式，为了平滑滚动
-            //add class "scroll", for smooth scroll
-            var aTags = document.querySelectorAll('#content-side a')
+        //添加scroll样式，为了平滑滚动
+        //add class "scroll", for smooth scroll
+        var aTags = document.querySelectorAll('#content-side a')
 
-            //add class for everyone
-            // aTags.forEach(function () {
-            //     console.log(this);
-            // })
-            for (var i = 0; i < aTags.length; i++) {
-                // if (!aTags[i].classList.contains('scroll')) {
-                //     aTags[i].classList.add('scroll')
-                // }
-                if (!aTags[i].hasAttribute('data-scroll')) {
-                  aTags[i].setAttribute('data-scroll','');
-                }
-
+        //add class for everyone
+        // aTags.forEach(function () {
+        //     console.log(this);
+        // })
+        for (var i = 0; i < aTags.length; i++) {
+            // if (!aTags[i].classList.contains('scroll')) {
+            //     aTags[i].classList.add('scroll')
+            // }
+            if (!aTags[i].hasAttribute('data-scroll')) {
+                aTags[i].setAttribute('data-scroll', '');
             }
+
+        }
         // }
 
     }
