@@ -1,0 +1,83 @@
+---
+        layout: null
+        ---
+        <?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>zlovae的技术博客</title>
+        <description></description>
+        <link>http://localhost:4001/</link>
+        <atom:link href="http://localhost:4001/feed.xml" rel="self"
+        type="application/rss+xml"/>
+        <pubDate>Tue, 03 Sep 2019 04:20:49 +0800</pubDate>
+        <lastBuildDate>Tue, 03 Sep 2019 04:20:49 +0800</lastBuildDate>
+        <generator>Jekyll v3.8.6</generator>
+        
+        <item>
+            <title>Java并发机制的底层实现原理</title>
+            <description>《Java并发编程的艺术》第三章（1）
+            </description>
+            <pubDate>Fri, 03 May 2019 19:22:43 +0800</pubDate>
+            <link>http://localhost:4001/2019/05/03/Java-memory-model-%E2%85%A0/</link>
+            <guid isPermaLink="true">http://localhost:4001/2019/05/03/Java-memory-model-%E2%85%A0/</guid>
+            
+            <category>Java</category>
+            
+            <category>并发</category>
+            
+            
+            <category>Java</category>
+            
+        </item>
+        
+        <item>
+            <title>Java并发机制的底层实现原理</title>
+            <description>《Java并发编程的艺术》第二章
+            </description>
+            <pubDate>Fri, 03 May 2019 05:18:13 +0800</pubDate>
+            <link>http://localhost:4001/2019/05/03/The-underlying-implementation-principle-of-Java-concurrency-mechanism/</link>
+            <guid isPermaLink="true">http://localhost:4001/2019/05/03/The-underlying-implementation-principle-of-Java-concurrency-mechanism/</guid>
+            
+            <category>Java</category>
+            
+            <category>并发</category>
+            
+            
+            <category>Java</category>
+            
+        </item>
+        
+        <item>
+            <title>Java并发编程的挑战</title>
+            <description>《Java并发编程的艺术》第一章
+            </description>
+            <pubDate>Wed, 01 May 2019 00:37:28 +0800</pubDate>
+            <link>http://localhost:4001/2019/05/01/Challenges-of-concurrent-programming/</link>
+            <guid isPermaLink="true">http://localhost:4001/2019/05/01/Challenges-of-concurrent-programming/</guid>
+            
+            <category>Java</category>
+            
+            <category>并发</category>
+            
+            
+            <category>Java</category>
+            
+        </item>
+        
+        <item>
+            <title>hello jekyll!!</title>
+            <description>一直想搭的博客，终于起步啦，要坚持呀！
+            </description>
+            <pubDate>Fri, 26 Apr 2019 07:27:31 +0800</pubDate>
+            <link>http://localhost:4001/2019/04/26/my-first-jekyll/</link>
+            <guid isPermaLink="true">http://localhost:4001/2019/04/26/my-first-jekyll/</guid>
+            
+            <category>jekyll</category>
+            
+            
+            <category>jekyll</category>
+            
+        </item>
+        
+    </channel>
+</rss>

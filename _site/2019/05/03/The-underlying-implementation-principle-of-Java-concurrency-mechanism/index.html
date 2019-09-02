@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Java并发机制的底层实现原理</title>
+    <meta name="description"
+          content="《Java并发编程的艺术》第二章">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_8v3czwksspqlg14i.css">
+    <link rel="stylesheet" href="
+    /css/main.css ">
+    <link rel="canonical" href="http://localhost:4001/2019/05/03/The-underlying-implementation-principle-of-Java-concurrency-mechanism/">
+    <link rel="alternate" type="application/rss+xml" title="zlovae的技术博客" href="http://localhost:4001
+    /feed.xml ">
+
+    
+    <script>
+        // 百度统计代码
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?552aa8d99c04e57a157ba015b317ce20";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+    
+    
+    <script>
+        // google analytics
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-72449510-4', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+    
+
+    
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    tex2jax: { inlineMath: [["$","$"],["\\(","\\)"]] },
+    "HTML-CSS": {
+      linebreaks: { automatic: true, width: "container" }
+    }
+});
+
+    </script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    
+</head>
+
+
+<body>
+
+<header id="top">
+    <div class="wrapper">
+        <a href="/" class="brand">zlovae的技术博客</a>
+        <small>C++ and Java Coder</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                        <a href="/">
+                            
+                            <i class="fa fa-home"></i>Home
+                        </a>
+                </li>
+
+                
+                
+                <li>
+                    
+                        <a href="/archive/">
+                            
+                            <i class="fa fa-archive"></i>Archives
+                        </a>
+                </li>
+                
+                
+                
+                <li>
+                    
+                        <a href="/category/">
+                            
+                            <i class="fa fa-th-list"></i>Categories
+                        </a>
+                </li>
+                
+                
+                
+                <li>
+                    
+                        <a href="/tag/">
+                            
+                            <i class="fa fa-tags"></i>Tags
+                        </a>
+                </li>
+                
+                
+                
+                <li>
+                    
+                        <a href="/demo/">
+                            
+                            <i class="fa fa-play"></i>Demo
+                        </a>
+                </li>
+                
+                
+                
+                <li>
+                    
+                        <a href="/about/">
+                            
+                            <i class="fa fa-heart"></i>About
+                        </a>
+                </li>
+                
+                
+                
+                
+                
+                
+                
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+<div class="page clearfix" post>
+    <div class="left">
+        <h1>Java并发机制的底层实现原理</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2019-05-03
+            </div>
+
+            <div class="label-card">
+                
+            </div>
+            <div class="label-card">
+                <p><i class="fa fa-eye fa-x"></i><span id="busuanzi_value_page_pv"></span></p>
+            </div>
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+                
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+
+
+<a href="/category/#Java" title="Category: Java" rel="category">Java</a>
+
+
+
+    <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+                
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+
+
+<!--a href="/tag/#Java" title="Tag: Java" rel="tag">Java</a-->
+<a href="/tag/#Java" title="Tag: Java" rel="tag">Java</a>&nbsp;
+
+<!--a href="/tag/#%E5%B9%B6%E5%8F%91" title="Tag: 并发" rel="tag">并发</a-->
+<a href="/tag/#并发" title="Tag: 并发" rel="tag">并发</a>
+
+
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+            <h2 id="21-volatile的应用">2.1 volatile的应用</h2>
+<h4 id="1volatile的定义和实现原理">1.volatile的定义和实现原理</h4>
+<p><strong>定义</strong>：<code class="highlighter-rouge">Java编程语言允许线程访问共享变量，为了确保共享变量能被准确和一致地更新，线程应该确保通过排他锁单独获得这个变量。</code></p>
+
+<h6 id="cpu的术语定义">CPU的术语定义：</h6>
+
+<ul>
+  <li>内存屏障<code class="highlighter-rouge">memory barriers</code>： 是一组处理器指令，用于实现对内存操作的顺序限制</li>
+  <li>缓冲行<code class="highlighter-rouge">cache line</code>： 缓存中可以分配的最小存储单位。处理器填写缓存线时会加载整个缓存线，需要使用多个主内存读周期。</li>
+  <li>原子操作<code class="highlighter-rouge">atomic operations</code>： 不可中断的一个或一系列操作。</li>
+  <li>缓存行填充<code class="highlighter-rouge">cache line fill</code>： 当处理器识别到从内存中读取操作数是可缓存的，处理器读取整个缓存行到适当的缓存（L1，L2，L3的
+或所有）。</li>
+  <li>缓存命中<code class="highlighter-rouge">cache hit</code>： 如果进行高速缓存行填充操作的内存位置仍然是下次处理器访问的地址时，处理器从缓存中读取操作数，而不是
+从内存中读取。</li>
+  <li>写命中<code class="highlighter-rouge">write hit</code>： 当处理器将操作数写回到一个内存缓存的区域时，它会检查这个缓存的内存地址是否在缓存行中，如果存在一个有
+效的缓存行，则处理器将这个操作数写回到缓存，而不是写回到内存，这个操作被称为写命中。</li>
+  <li>写缺失<code class="highlighter-rouge">write misses the cache</code>： 一个有效的缓存行被写入到不存在的内存区域。</li>
+</ul>
+
+<p><strong>volatile两条实现原则</strong>
+Lock前缀指令会引起处理器缓存写回到内存。</p>
+
+<p>一个处理器的缓存写回到内存会导致其他处理器的缓存无效。</p>
+
+<h4 id="2volatile的使用优化">2.volatile的使用优化</h4>
+<p><del>追加字节</del> Java7以后不是很需要。</p>
+
+<h2 id="22-synchronized的实现原理与应用">2.2 synchronized的实现原理与应用</h2>
+<h3 id="221-java对象头">2.2.1 Java对象头</h3>
+
+<h3 id="222-锁的升级和对比">2.2.2 锁的升级和对比</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>锁</th>
+      <th>优点</th>
+      <th>缺点</th>
+      <th>适用场景</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>偏向锁</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="23-原子操作的实现原理">2.3 原子操作的实现原理</h2>
+
+<h2 id="24-本章小结">2.4 本章小结</h2>
+
+<h2 id="个人总结">个人总结</h2>
+
+
+        </article>
+        <hr>
+
+        
+        
+        
+        
+        
+        
+        
+        <h2 id="similar_posts">Similar Posts</h2>
+        <ul>
+            
+            <li class="relatedPost">
+                <a href="/2019/05/03/Java-memory-model-%E2%85%A0/">Java并发机制的底层实现原理
+                    
+                </a>
+            </li>
+            
+            
+            
+            
+        
+            
+            
+        
+        
+            
+        
+            
+            
+            
+        
+        
+        
+        
+        
+            <li class="relatedPost">
+                <a href="/2019/05/01/Challenges-of-concurrent-programming/">Java并发编程的挑战
+                    
+                </a>
+            </li>
+            
+            
+            
+            
+        
+            
+            
+        
+        
+            
+        
+            
+            
+            
+        
+        
+        
+        
+            
+        
+            
+            
+            
+            
+        </ul>
+        
+
+        <div class="post-recent">
+    <div class="pre">
+        
+        <p><strong>上一篇</strong> <a href="/2019/05/01/Challenges-of-concurrent-programming/">Java并发编程的挑战</a>
+        </p>
+        
+    </div>
+    <div class="nex">
+
+        
+        <p><strong>下一篇</strong> <a href="/2019/05/03/Java-memory-model-%E2%85%A0/">Java并发机制的底层实现原理</a></p>
+        
+    </div>
+</div>
+
+
+        <h2 id="comments">Comments</h2>
+        
+
+
+
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    Content
+                </div>
+                <ul id="content-side" class="content-ul">
+                    
+                    <li><a href="#similar_posts">Similar Posts</a></li>
+                    
+                    <li><a href="#comments">Comments</a></li>
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <!-- <div class="side">bbbb</div> -->
+        </div>
+    </div>
+</div>
+<script>
+    /**
+     * target _blank
+     */
+    (function () {
+        var aTags = document.querySelectorAll('article a:not([id])')
+        for (var i = 0; i < aTags.length; i++) {
+            aTags[i].setAttribute('target', '_blank')
+        }
+    }());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+<footer class="site-footer">
+
+
+    <div class="wrapper">
+
+        <p class="description">
+             来自zlovae的个人专栏~ 
+        </p>
+        <p class="contact">
+            Contact me at: 
+            <a href="https://github.com/zlovae" title="GitHub"><i class="fa fa-github"
+                                                                                    aria-hidden="true"></i></a>  
+            <a href="mailto:zhangqixmu@163.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>  
+            <a href="http://weibo.com/lovaest" title="Weibo"><i class="fa fa-weibo"
+                                                                                aria-hidden="true"></i></a> 
+            
+            <a href="https://www.zhihu.com/people/lao-zi-yao-dang-shu-nu/activities" title="Zhihu"><i
+                    class="iconfont icon-daoruzhihu"></i></a>    
+            <a href="https://www.linkedin.com/in/琦-张-0a4589162" title="LinkedIn"><i class="fa fa-linkedin"
+                                                                                                 aria-hidden="true"></i></a>
+             
+        </p>
+        <p>
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次，本站访客数<span
+                id="busuanzi_value_site_uv"></span>人次，本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> & <a
+                    href="https://pages.github.com/" target="_blank">Github Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a>HyG</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="back-to-top">
+    <a href="#top" data-scroll>
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+<script src="
+/js/main.js " charset="utf-8"></script>
+<
+script
+src = " / js / smooth - scroll.min.js
+"
+charset = "utf-8" ></script>
+<script type="text/javascript">
+    smoothScroll.init({
+        speed: 500, // Integer. How fast to complete the scroll in milliseconds
+        easing: 'easeInOutCubic', // Easing pattern to use
+        offset: 20, // Integer. How far to offset the scrolling anchor location in pixels
+    });
+</script>
+<!-- <script src=" /js/scroll.min.js " charset="utf-8"></script> -->
+</body>
+
+</html>
