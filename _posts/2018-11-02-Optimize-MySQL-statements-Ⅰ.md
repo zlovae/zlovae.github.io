@@ -1,9 +1,9 @@
 ---
 layout: post
-title:  "Java并发机制的底层实现原理"
+title:  "MySQL优化Ⅰ"
 date:   2018-11-02 15:47:10
-categories: Java
-tags: Java 并发
-excerpt: 《Java并发编程的艺术》第三章（3）
+categories: MySQL
+tags: MySQL 数据库
+excerpt: 使用Join优化MySQL
 mathjax: true
 ---
